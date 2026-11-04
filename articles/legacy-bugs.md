@@ -100,58 +100,84 @@ identical(new[-41, ], old[-41, ])
 #> [1] TRUE
 ```
 
-### How often does this happen with the SOP design?
+### When does this happen in practice?
 
-With the SOP block lengths (4 and 6, probabilities 0.75 and 0.25) the
-length of the last block is random, so whether the bug strikes depends
-on the seed. Over 300 seeds for a list of 100 patients:
+A single patient ends up alone in the last block only if the earlier
+blocks add up to exactly `nPat - 1`. With two arms and the SOP block
+lengths 4 and 6, every block is even, so this can only happen when
+`nPat` is **odd**. With three arms (blocks of 6 and 9) it can happen
+whenever `nPat - 1` is a multiple of 3, which includes the round number
+100. Whether it happens for a given list then depends on the seed.
+
+Below, each design is run with 300 seeds and the outcome counted:
 
 ``` r
 
-outcome <- function(f, seed, ...) {
+outcome <- function(f, seed, nPat, ...) {
   set.seed(seed)
-  res <- tryCatch(f(...), error = function(e) e)
+  res <- tryCatch(f(nPat = nPat, ...), error = function(e) e)
   if (inherits(res, "error")) return("stops with error")
   if (anyDuplicated(res$pat_id)) return("duplicated IDs")
-  if (!setequal(res$pat_id, formatC(1:100, flag = "0", width = 3))) return("wrong IDs")
+  if (!setequal(res$pat_id, formatC(1:nPat, flag = "0", width = nchar(nPat))))
+    return("wrong ID")
   "correct"
 }
 
-grid <- expand.grid(n.block_permute = c(1, 2, 3), seed = 1:300)
-grid$legacy <- mapply(function(nb, s)
-  outcome(old_createRandoList, s, nPat = 100, blocklength = c(4, 6),
-          blocklength_prob = c(0.75, 0.25), n.block_permute = nb),
-  grid$n.block_permute, grid$seed)
-grid$new <- mapply(function(nb, s)
-  outcome(createRandoList, s, nPat = 100, blocklength = c(4, 6),
-          blocklength_prob = c(0.75, 0.25), n.block_permute = nb),
-  grid$n.block_permute, grid$seed)
+designs <- list(
+  "2 arms, blocks 4/6, nPat 100" = list(nPat = 100, arms = 2, blocklength = c(4, 6)),
+  "2 arms, blocks 4/6, nPat 101" = list(nPat = 101, arms = 2, blocklength = c(4, 6)),
+  "3 arms, blocks 6/9, nPat 100" = list(nPat = 100, arms = 3, blocklength = c(6, 9))
+)
 
-knitr::kable(table(grid$n.block_permute, grid$legacy),
-             caption = "Legacy code: lists per n.block_permute (rows), out of 300 seeds")
+run_design <- function(f, d, nb) {
+  vapply(1:300, function(s)
+    outcome(f, s, nPat = d$nPat, arms = d$arms, blocklength = d$blocklength,
+            blocklength_prob = c(0.75, 0.25), n.block_permute = nb),
+    character(1))
+}
+
+levels_out <- c("correct", "wrong ID", "duplicated IDs", "stops with error")
+tab <- function(f) {
+  rows <- list()
+  for (nm in names(designs)) for (nb in c(1, 2)) {
+    res <- factor(run_design(f, designs[[nm]], nb), levels = levels_out)
+    rows[[paste0(nm, ", n.block_permute = ", nb)]] <- table(res)
+  }
+  do.call(rbind, rows)
+}
+
+knitr::kable(tab(old_createRandoList), caption = "Legacy code (out of 300 seeds per row)")
 ```
 
-| correct |
-|--------:|
-|     300 |
-|     300 |
-|     300 |
+|  | correct | wrong ID | duplicated IDs | stops with error |
+|:---|---:|---:|---:|---:|
+| 2 arms, blocks 4/6, nPat 100, n.block_permute = 1 | 300 | 0 | 0 | 0 |
+| 2 arms, blocks 4/6, nPat 100, n.block_permute = 2 | 300 | 0 | 0 | 0 |
+| 2 arms, blocks 4/6, nPat 101, n.block_permute = 1 | 168 | 0 | 132 | 0 |
+| 2 arms, blocks 4/6, nPat 101, n.block_permute = 2 | 229 | 0 | 71 | 0 |
+| 3 arms, blocks 6/9, nPat 100, n.block_permute = 1 | 169 | 0 | 131 | 0 |
+| 3 arms, blocks 6/9, nPat 100, n.block_permute = 2 | 245 | 0 | 55 | 0 |
 
-Legacy code: lists per n.block_permute (rows), out of 300 seeds {.table}
+Legacy code (out of 300 seeds per row) {.table}
 
 ``` r
 
-knitr::kable(table(grid$n.block_permute, grid$new),
-             caption = "New code: lists per n.block_permute (rows), out of 300 seeds")
+knitr::kable(tab(createRandoList), caption = "New code (out of 300 seeds per row)")
 ```
 
-| correct |
-|--------:|
-|     300 |
-|     300 |
-|     300 |
+|  | correct | wrong ID | duplicated IDs | stops with error |
+|:---|---:|---:|---:|---:|
+| 2 arms, blocks 4/6, nPat 100, n.block_permute = 1 | 300 | 0 | 0 | 0 |
+| 2 arms, blocks 4/6, nPat 100, n.block_permute = 2 | 300 | 0 | 0 | 0 |
+| 2 arms, blocks 4/6, nPat 101, n.block_permute = 1 | 300 | 0 | 0 | 0 |
+| 2 arms, blocks 4/6, nPat 101, n.block_permute = 2 | 300 | 0 | 0 | 0 |
+| 3 arms, blocks 6/9, nPat 100, n.block_permute = 1 | 300 | 0 | 0 | 0 |
+| 3 arms, blocks 6/9, nPat 100, n.block_permute = 2 | 300 | 0 | 0 | 0 |
 
-New code: lists per n.block_permute (rows), out of 300 seeds {.table}
+New code (out of 300 seeds per row) {.table}
+
+Lists made without permutation (`n.block_permute = 0`, the default) are
+never affected.
 
 ## 2. The legacy code stops when all permutation groups have the same size
 

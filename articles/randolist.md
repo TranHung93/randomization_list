@@ -137,7 +137,7 @@ dir.create(biostat, showWarnings = FALSE)
 final_like <- createRandoList(20, arm_names = c("Dex", "Pla"), seed = 583920175)
 write_rando_list(final_like, dir = biostat, study = "24EI", dummy = FALSE)
 #> Error:
-#> ! A FINAL list must not be written to '/tmp/RtmpaFo6Jc/BIOSTATISTICS' (matches forbidden_dirs). Write it to the secure Pharmacy folder.
+#> ! A FINAL list must not be written to '/tmp/RtmpEkWs87/BIOSTATISTICS' (matches forbidden_dirs). Write it to the secure Pharmacy folder.
 ```
 
 ## 4. What the pharmacist changes
@@ -158,7 +158,7 @@ Get the new seed once with:
 ``` r
 
 generate_seed()
-#> [1] 420172533
+#> [1] 209303592
 ```
 
 Then run the script in a clean session so no copy of the list is left in

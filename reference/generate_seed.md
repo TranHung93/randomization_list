@@ -25,5 +25,5 @@ An integer between 100000000 and 999999999.
 
 ``` r
 generate_seed()
-#> [1] 464803124
+#> [1] 427768725
 ```

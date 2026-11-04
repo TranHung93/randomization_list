@@ -212,7 +212,7 @@ a log with the MD5 sum of each file and the session information.</p>
 <span><span class="va">final_like</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createRandoList.html">createRandoList</a></span><span class="op">(</span><span class="fl">20</span>, arm_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Dex"</span>, <span class="st">"Pla"</span><span class="op">)</span>, seed <span class="op">=</span> <span class="fl">583920175</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/write_rando_list.html">write_rando_list</a></span><span class="op">(</span><span class="va">final_like</span>, dir <span class="op">=</span> <span class="va">biostat</span>, study <span class="op">=</span> <span class="st">"24EI"</span>, dummy <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> A FINAL list must not be written to '/tmp/RtmpaFo6Jc/BIOSTATISTICS' (matches forbidden_dirs). Write it to the secure Pharmacy folder.</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> A FINAL list must not be written to '/tmp/RtmpEkWs87/BIOSTATISTICS' (matches forbidden_dirs). Write it to the secure Pharmacy folder.</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="what-the-pharmacist-changes">4. What the pharmacist changes<a class="anchor" aria-label="anchor" href="#what-the-pharmacist-changes"></a>
@@ -228,7 +228,7 @@ folder):</p>
 <p>Get the new seed once with:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/generate_seed.html">generate_seed</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 420172533</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 209303592</span></span></code></pre></div>
 <p>Then run the script in a clean session so no copy of the list is left
 in a workspace file: <code>Rscript --vanilla 24EI_randolist.R</code>. If
 the seed was not changed, the script stops:</p>
@@ -382,7 +382,7 @@ case with runnable code.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Hung Tran, Marcel Wolbers, Khanh Trinh Dong Huu.</p>
+  <p>Developed by Hung Tran, Marcel Wolbers, Khanh Trinh Dong Huu, Ronald Geskus.</p>
 </div>
 
 <div class="pkgdown-footer-right">

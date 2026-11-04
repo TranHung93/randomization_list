@@ -31,6 +31,12 @@
       <ul class="navbar-nav me-auto">
 <li class="active nav-item"><a class="nav-link" href="../articles/randolist.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/legacy-bugs.html">Where the legacy code goes wrong, and how randolist fixes it</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -206,7 +212,7 @@ a log with the MD5 sum of each file and the session information.</p>
 <span><span class="va">final_like</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createRandoList.html">createRandoList</a></span><span class="op">(</span><span class="fl">20</span>, arm_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Dex"</span>, <span class="st">"Pla"</span><span class="op">)</span>, seed <span class="op">=</span> <span class="fl">583920175</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/write_rando_list.html">write_rando_list</a></span><span class="op">(</span><span class="va">final_like</span>, dir <span class="op">=</span> <span class="va">biostat</span>, study <span class="op">=</span> <span class="st">"24EI"</span>, dummy <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;">:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> A FINAL list must not be written to '/tmp/RtmpiLSr5f/BIOSTATISTICS' (matches forbidden_dirs). Write it to the secure Pharmacy folder.</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> A FINAL list must not be written to '/tmp/Rtmp0eqmi4/BIOSTATISTICS' (matches forbidden_dirs). Write it to the secure Pharmacy folder.</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="what-the-pharmacist-changes">4. What the pharmacist changes<a class="anchor" aria-label="anchor" href="#what-the-pharmacist-changes"></a>
@@ -222,7 +228,7 @@ folder):</p>
 <p>Get the new seed once with:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/generate_seed.html">generate_seed</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 721151189</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 930683011</span></span></code></pre></div>
 <p>Then run the script in a clean session so no copy of the list is left
 in a workspace file: <code>Rscript --vanilla 24EI_randolist.R</code>. If
 the seed was not changed, the script stops:</p>
@@ -366,7 +372,8 @@ refused.</li>
 reset to <code>"default"</code>.</li>
 </ul>
 <p>The package tests run the legacy file side by side with the new code
-over many seeds and settings to confirm this.</p>
+over many seeds and settings to confirm this. The article <a href="legacy-bugs.html">Where the legacy code goes wrong</a> shows every
+case with runnable code.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

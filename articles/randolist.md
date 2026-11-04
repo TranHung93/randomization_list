@@ -137,7 +137,7 @@ dir.create(biostat, showWarnings = FALSE)
 final_like <- createRandoList(20, arm_names = c("Dex", "Pla"), seed = 583920175)
 write_rando_list(final_like, dir = biostat, study = "24EI", dummy = FALSE)
 #> Error:
-#> ! A FINAL list must not be written to '/tmp/RtmpiLSr5f/BIOSTATISTICS' (matches forbidden_dirs). Write it to the secure Pharmacy folder.
+#> ! A FINAL list must not be written to '/tmp/Rtmp0eqmi4/BIOSTATISTICS' (matches forbidden_dirs). Write it to the secure Pharmacy folder.
 ```
 
 ## 4. What the pharmacist changes
@@ -158,7 +158,7 @@ Get the new seed once with:
 ``` r
 
 generate_seed()
-#> [1] 721151189
+#> [1] 930683011
 ```
 
 Then run the script in a clean session so no copy of the list is left in
@@ -306,4 +306,7 @@ which are all deliberate:
   `"default"`.
 
 The package tests run the legacy file side by side with the new code
-over many seeds and settings to confirm this.
+over many seeds and settings to confirm this. The article [Where the
+legacy code goes
+wrong](https://tranhung93.github.io/randomization_list/articles/legacy-bugs.md)
+shows every case with runnable code.

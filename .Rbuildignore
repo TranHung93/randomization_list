@@ -1,0 +1,8 @@
+^\.github$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^sop$
+^.*\.Rproj$
+^\.Rproj\.user$
+^NEWS\.md$

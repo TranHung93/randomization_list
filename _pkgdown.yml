@@ -1,0 +1,21 @@
+url: https://tranhung93.github.io/randomization_list/
+
+template:
+  bootstrap: 5
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, github]
+
+reference:
+- title: Create a list
+  contents:
+  - createRandoList
+  - composite_strata
+- title: SOP helpers
+  contents:
+  - check_final_setup
+  - generate_seed
+  - check_rando_list
+  - write_rando_list

@@ -1,0 +1,35 @@
+Package: randolist
+Type: Package
+Title: Reproducible, Blinded Block Randomisation Lists for Clinical Trials
+Version: 1.0.0
+Authors@R: c(
+    person("Hung", "Tran", role = c("aut", "cre"),
+           email = "thaihung.tran306@gmail.com"),
+    person("Marcel", "Wolbers", role = "aut",
+           comment = "original createRandoList()"),
+    person("Khanh", "Trinh Dong Huu", role = "aut",
+           comment = "patient ID permutation and composite strata"),
+    person("OUCRU Biostatistics Group", role = "ctb"))
+Description: Creates (stratified) permuted block randomisation lists with
+    random block lengths, following the OUCRU SOP PR-BST-DM-001 on creating
+    randomisation lists. This is a revision of the legacy
+    'createRandoListNew.R' utility that produces identical lists for the
+    same seed and settings, fixes a bug that could duplicate patient IDs
+    when IDs are permuted, restores the caller's random number generator
+    settings, validates inputs, and adds helpers that enforce the SOP's
+    dummy/final separation, file naming and verification steps.
+License: file LICENSE
+Encoding: UTF-8
+Depends: R (>= 3.6.0)
+Imports:
+    tools,
+    utils
+Suggests:
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+URL: https://tranhung93.github.io/randomization_list/,
+    https://github.com/TranHung93/randomization_list
+BugReports: https://github.com/TranHung93/randomization_list/issues

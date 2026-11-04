@@ -9,6 +9,7 @@ Authors@R: c(
            comment = "original createRandoList()"),
     person("Khanh", "Trinh Dong Huu", role = "aut",
            comment = "patient ID permutation and composite strata"),
+    person("Ronald", "Geskus", role = "aut"),
     person("OUCRU Biostatistics Group", role = "ctb"))
 Description: Creates (stratified) permuted block randomisation lists with
     random block lengths, following the OUCRU SOP PR-BST-DM-001 on creating

@@ -19,3 +19,10 @@ reference:
   - generate_seed
   - check_rando_list
   - write_rando_list
+
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - randolist
+  - legacy-bugs

@@ -31,6 +31,13 @@ is kept unchanged in `inst/legacy/` and used as the reference in the tests.
 * Randomisation numbers that are not unique are refused.
 * Generation metadata in `attr(x, "rando_info")`.
 
+## Documentation
+
+* New article "Where the legacy code goes wrong, and how randolist fixes it",
+  which runs the legacy and new code side by side for every case.
+* The new function also refuses arm names that do not match `arms` (legacy
+  silently produced `NA` arms).
+
 ## New helpers for the SOP
 
 * `dummy_arm_names()`, `check_final_setup()` and `generate_seed()` for the

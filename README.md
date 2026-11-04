@@ -17,7 +17,10 @@ seed and settings it produces **the same list**, but it
 * adds helpers that enforce the SOP's dummy/final switch, file naming and
   verification of the list.
 
-The guide: **[Creating a reproducible, blinded randomisation list](https://tranhung93.github.io/randomization_list/articles/randolist.html)**.
+Articles:
+
+* **[Creating a reproducible, blinded randomisation list](https://tranhung93.github.io/randomization_list/articles/randolist.html)**: the SOP workflow step by step.
+* **[Where the legacy code goes wrong, and how randolist fixes it](https://tranhung93.github.io/randomization_list/articles/legacy-bugs.html)**: the old and new code run side by side.
 
 ## Installation
 

@@ -229,4 +229,6 @@ are all deliberate:
 * The caller's `sample.kind` is restored instead of being reset to `"default"`.
 
 The package tests run the legacy file side by side with the new code over many
-seeds and settings to confirm this.
+seeds and settings to confirm this. The article
+[Where the legacy code goes wrong](legacy-bugs.html) shows every case with
+runnable code.

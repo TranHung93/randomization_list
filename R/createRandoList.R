@@ -9,6 +9,8 @@
 #  * BUG FIX: permuting patient IDs (n.block_permute > 0) could produce a wrong
 #    or duplicated ID when the last permutation group held a single patient,
 #    because sample(x) with a single number x samples from 1:x.
+#  * BUG FIX: when all permutation groups had the same size, sapply() returned
+#    a matrix (unlist() leaves it a matrix) and the function failed.
 #  * The caller's sample.kind is restored on exit (also on error), instead of
 #    being reset to "default".
 #  * Optional `seed` (and `seed_per_stratum`) arguments; stops if no seed is set.

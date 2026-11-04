@@ -17,7 +17,8 @@ strip_info <- function(x) {
 # Run legacy and new code from the same seed
 run_both <- function(seed, ...) {
   set.seed(seed)
-  old <- suppressMessages(suppressWarnings(legacy$createRandoList(...)))
+  old <- tryCatch(suppressMessages(suppressWarnings(legacy$createRandoList(...))),
+                  error = function(e) e)
   set.seed(seed)
   new <- createRandoList(...)
   list(old = old, new = strip_info(new))
@@ -28,6 +29,15 @@ last_group_singleton <- function(d) {
   if (is.null(d$permute.block)) return(FALSE)
   g <- d$permute.block
   sum(g == g[length(g)]) == 1L
+}
+
+# Did the second legacy bug apply? (2+ permutation groups, all of equal size:
+# sapply() returns a matrix that unlist() leaves as a matrix, and the legacy
+# function fails with "pat_id not found")
+equal_size_groups <- function(d) {
+  if (is.null(d$permute.block)) return(FALSE)
+  sizes <- table(d$permute.block)
+  length(sizes) > 1L && length(unique(sizes)) == 1L
 }
 
 # Compare one stratum: identical, except the patient ID / RanNo of the last row

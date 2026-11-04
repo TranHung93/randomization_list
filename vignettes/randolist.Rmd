@@ -216,10 +216,14 @@ p[, c("pat_id", "block_number", "permute.block", "arm", "RanNo")]
 Same seed + same arguments give the same list, with these exceptions, which
 are all deliberate:
 
-* **Bug fix.** With `n.block_permute > 0`, the legacy code could give a wrong or
-  duplicated patient number when the last permutation group held a single
-  patient (`sample(41, 1)` samples from `1:41`). The new code keeps the
-  correct number; all other rows and the following strata are unchanged.
+* **Two bug fixes**, both only when patient numbers are permuted
+  (`n.block_permute > 0`):
+    * the legacy code could give a wrong or duplicated patient number when the
+      last permutation group held a single patient (`sample(41, 1)` samples
+      from `1:41`). The new code keeps the correct number; all other rows and
+      the following strata are unchanged;
+    * when all permutation groups had the same size, the legacy code stopped
+      with "pat_id not found". The new code works.
 * Lists whose randomisation numbers would not be unique are refused.
 * Strata with fewer patients than arms (or none) are allowed.
 * The caller's `sample.kind` is restored instead of being reset to `"default"`.

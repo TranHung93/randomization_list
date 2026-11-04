@@ -54,7 +54,11 @@ test_that("permuted patient IDs: identical to legacy (apart from the legacy bug)
   for (s in seeds) for (nb in c(1, 2, 3, Inf)) for (n in c(50, 97)) {
     r <- run_both(s, nPat = n, blocklength = c(4, 6),
                   blocklength_prob = c(0.75, 0.25), n.block_permute = nb)
-    expect_same_as_legacy(r$new, r$old)
+    if (equal_size_groups(r$new)) {
+      expect_s3_class(r$old, "error")   # second legacy bug, see test-bugfix-permutation.R
+    } else {
+      expect_same_as_legacy(r$new, r$old)
+    }
   }
 })
 
@@ -62,7 +66,11 @@ test_that("permuted IDs with strata: identical to legacy", {
   strata <- c(Kids = "K", Adults = "A", Elderly = "E")
   for (s in seeds) {
     r <- run_both(s, nPat = c(30, 61, 45), strata = strata, n.block_permute = 2)
-    for (k in names(r$old)) expect_same_as_legacy(r$new[[k]], r$old[[k]])
+    if (any(vapply(r$new, equal_size_groups, logical(1)))) {
+      expect_s3_class(r$old, "error")   # second legacy bug
+    } else {
+      for (k in names(r$old)) expect_same_as_legacy(r$new[[k]], r$old[[k]])
+    }
   }
 })
 

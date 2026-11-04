@@ -9,12 +9,16 @@ is kept unchanged in `inst/legacy/` and used as the reference in the tests.
 * Same seed and arguments give the same list (random numbers are drawn in the
   same order). Verified by tests over many seeds and settings.
 
-## Bug fix
+## Bug fixes (both only affect `n.block_permute > 0`)
 
-* With `n.block_permute > 0`, a permutation group holding a single patient
-  (possible in the last, truncated block) got a random number from `1:id`
-  instead of its own ID, which could duplicate patient numbers. Fixed; other
-  rows and the following strata are unchanged.
+* A permutation group holding a single patient (possible in the last,
+  truncated block) got a random number from `1:id` instead of its own ID,
+  which could duplicate patient numbers. Fixed; other rows and the following
+  strata are unchanged.
+* When all permutation groups had the same number of patients (e.g. fixed
+  block length 4, `nPat = 16`, `n.block_permute = 2`), `sapply()` returned a
+  matrix that `unlist()` left as a matrix, and the legacy function stopped with
+  "pat_id not found". Fixed.
 
 ## Changes
 

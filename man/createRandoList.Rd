@@ -16,7 +16,7 @@ createRandoList(nPat, arms = 2, arm_names = LETTERS[seq_len(arms)],
   blocklength_prob = rep(1/length(blocklength), length(blocklength)),
   first_patid = 1,
   patid_format = list(flag = "0", width = nchar(max(nPat + first_patid - 1))),
-  n.block_permute = 0, RanNo_pattern = "\{stratum\}-\{pat_id\}", seed = NULL,
+  n.block_permute = 0, RanNo_pattern = "{stratum}-{pat_id}", seed = NULL,
   sample_kind = c("Rounding", "Rejection"), seed_per_stratum = FALSE)
 }
 \arguments{

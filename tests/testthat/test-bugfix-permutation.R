@@ -24,3 +24,23 @@ test_that("the fix does not shift the random stream for later strata", {
     expect_identical(r$new$B, r$old$B)
   }
 })
+
+# Second legacy bug: when all permutation groups have the same size (here 2
+# groups of 8 with blocklength = 4, nPat = 16, n.block_permute = 2), sapply()
+# returns a matrix, unlist() keeps it a matrix and the legacy function fails.
+
+test_that("legacy fails with equal-sized permutation groups; new code works", {
+  for (s in 1:10) {
+    r <- run_both(s, nPat = 16, blocklength = 4, n.block_permute = 2)
+    expect_s3_class(r$old, "error")
+    expect_setequal(r$new$pat_id, formatC(1:16, flag = "0", width = 2))
+    expect_identical(r$new$permute.block, rep(c(1, 2), each = 8))
+    # the arm sequence is drawn before the permutation, so it equals the
+    # legacy list without permutation
+    ref <- run_both(s, nPat = 16, blocklength = 4)
+    expect_identical(r$new$arm, ref$old$arm)
+    expect_identical(r$new$block_number, ref$old$block_number)
+    # IDs are only shuffled within their own group
+    expect_setequal(r$new$pat_id[1:8], formatC(1:8, flag = "0", width = 2))
+  }
+})

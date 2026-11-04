@@ -10,8 +10,8 @@ the OUCRU SOP **PR-BST-DM-001 Creating Randomisation Lists** (v008).
 `randolist` is a revision of the legacy `createRandoListNew.R`. For the same
 seed and settings it produces **the same list**, but it
 
-* fixes a bug that could duplicate patient numbers when they are permuted
-  (`n.block_permute`),
+* fixes two bugs when patient numbers are permuted (`n.block_permute`): one
+  could duplicate patient numbers, the other made the function fail,
 * restores your random number settings and refuses to run without a seed,
 * validates its inputs and refuses non-unique randomisation numbers,
 * adds helpers that enforce the SOP's dummy/final switch, file naming and
@@ -61,4 +61,4 @@ A full study script template: `system.file("templates", "rando_list_template.R",
 GitHub Actions runs `R CMD check` on Windows, macOS and Linux (R release,
 previous release and devel). The tests generate lists with the legacy and the
 new code from the same seeds and require them to be identical, apart from the
-documented bug fix.
+documented bug fixes.

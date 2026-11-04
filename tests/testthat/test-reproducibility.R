@@ -11,7 +11,7 @@ test_that("a longer list starts with the shorter list (single stratum, no permut
                            seed = 9, patid_format = list(width = 3, flag = "0"))
   long <- createRandoList(200, blocklength = c(4, 6), blocklength_prob = c(.75, .25),
                           seed = 9, patid_format = list(width = 3, flag = "0"))
-  expect_identical(as.list(long[1:50, ]), as.list(short))
+  expect_identical(as.list(strip_info(long)[1:50, ]), as.list(strip_info(short)))
 })
 
 test_that("seed_per_stratum makes strata independent of each other's size", {

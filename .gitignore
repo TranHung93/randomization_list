@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rcheck/
+randolist_*.tar.gz
+inst/doc
+docs/
+# Never commit generated randomisation lists
+*.csv
+!tests/testthat/fixtures/*.csv

@@ -1,0 +1,228 @@
+---
+title: "Creating a reproducible, blinded randomisation list"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Creating a reproducible, blinded randomisation list}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+This guide shows how to make a randomisation list with **randolist**,
+following the OUCRU SOP *PR-BST-DM-001 Creating Randomisation Lists* (v008).
+The package is a revision of the legacy `createRandoListNew.R`: for the same
+seed and settings it gives **the same list**, so existing studies can switch
+without their lists changing.
+
+```{r}
+library(randolist)
+```
+
+## Who does what
+
+The SOP keeps the trial statistician blinded by splitting the work:
+
+| Step | Who | What |
+|---|---|---|
+| 4.1.b | Statistician (RA) | Writes the code and makes a **dummy** list (seed known, arms named `*_Dummy`). |
+| 4.1.c | Head of Biostatistics | Reviews and approves the code. |
+| 4.1.e–f | Pharmacist | Sets the dummy flag to `FALSE`, replaces the seed with a new random seed, runs the code. |
+| 4.1.g | Pharmacist | Checks the final list (e.g. balance within blocks) and stores it in the secure Pharmacy folder. |
+
+Only the seed and the dummy flag differ between the dummy and the final code.
+Everything below is designed so that this switch cannot go wrong silently.
+
+## 1. The statistician's dummy code
+
+Put these settings at the very top of the study script. `DUMMY` controls the arm
+names and the output file names; `check_final_setup()` stops the final run if the
+seed was not changed.
+
+```{r}
+DUMMY      <- TRUE        # pharmacist: set to FALSE
+DUMMY_SEED <- 20261104    # seed of the dummy list (known to the statistician)
+SEED       <- DUMMY_SEED  # pharmacist: replace with generate_seed() output
+
+check_final_setup(dummy = DUMMY, seed = SEED, dummy_seed = DUMMY_SEED)
+arm_names <- dummy_arm_names(c("Dex", "Pla"), dummy = DUMMY)
+arm_names
+```
+
+Now generate the list. Use the SOP block lengths explicitly (4 and 6 with
+probabilities 0.75 and 0.25 for two arms) and make the list at least twice as
+long as the largest anticipated stratum.
+
+```{r}
+rl <- createRandoList(
+  nPat             = 200,          # 100 anticipated patients x 2
+  arms             = 2,
+  arm_names        = arm_names,
+  strata           = c(HTD = "001"),
+  blocklength      = c(4, 6),
+  blocklength_prob = c(0.75, 0.25),
+  seed             = SEED
+)
+head(rl, 8)
+```
+
+Passing `seed` inside the call is the same as calling `set.seed(SEED)` just
+before it, but makes it impossible to forget. The function also remembers how
+the list was made:
+
+```{r}
+str(attr(rl, "rando_info")[c("seed", "rng_kind", "R_version", "blocklength_prob")])
+```
+
+## 2. Check the list
+
+`check_rando_list()` confirms that randomisation numbers are unique and that
+every complete block is balanced. The last block may be incomplete because the
+list is cut at `nPat`.
+
+```{r}
+check_rando_list(rl)
+```
+
+## 3. Write it with SOP file names
+
+`write_rando_list()` builds the file name from the study, the dummy flag, the
+MonthYear and the R version (SOP 4.1.b), and writes a log with the MD5 sum of
+each file and the session information.
+
+```{r}
+out_dir <- file.path(tempdir(), "24EI_Nov2026")   # in practice: the study subfolder
+dir.create(out_dir, showWarnings = FALSE)
+files <- write_rando_list(rl, dir = out_dir, study = "24EI", dummy = DUMMY,
+                          overwrite = TRUE)
+basename(files$file)
+```
+
+It refuses combinations that would break blinding:
+
+```{r, error = TRUE}
+# arm names say "Dummy" but the flag says final
+write_rando_list(rl, dir = out_dir, study = "24EI", dummy = FALSE)
+
+# a final list may not go to a Biostatistics folder
+biostat <- file.path(tempdir(), "BIOSTATISTICS")
+dir.create(biostat, showWarnings = FALSE)
+final_like <- createRandoList(20, arm_names = c("Dex", "Pla"), seed = 583920175)
+write_rando_list(final_like, dir = biostat, study = "24EI", dummy = FALSE)
+```
+
+## 4. What the pharmacist changes
+
+The pharmacist receives the approved script and changes **only** the three lines
+at the top (and the output folder):
+
+```r
+DUMMY      <- FALSE
+DUMMY_SEED <- 20261104          # leave as is
+SEED       <- 583920175         # from generate_seed(), not a memorable number
+out_dir    <- "<secure Pharmacy folder>"
+```
+
+Get the new seed once with:
+
+```{r}
+generate_seed()
+```
+
+Then run the script in a clean session so no copy of the list is left in a
+workspace file: `Rscript --vanilla 24EI_randolist.R`. If the seed was not
+changed, the script stops:
+
+```{r, error = TRUE}
+check_final_setup(dummy = FALSE, seed = 20261104, dummy_seed = 20261104)
+```
+
+Keep the final code, CSV, log and PDF together in the Pharmacy folder. The log
+contains the seed, so it must not be copied to the Biostatistics folder. When
+making the PDF for pharmacy procedures, leave out the `block_number` and
+`permute.block` columns: they reveal the block structure.
+
+A template script with all of this is installed with the package:
+
+```{r, eval = FALSE}
+file.copy(system.file("templates", "rando_list_template.R", package = "randolist"),
+          "24EI_randolist.R")
+```
+
+## Stratified randomisation
+
+Combine strata with `composite_strata()`. Each stratum gets its own blocks; the
+stratum code is part of the randomisation number.
+
+```{r}
+strata <- composite_strata(site = c(HCMC = "1", HN = "2"),
+                           age  = c(Child = "C", Adult = "A"))
+strata
+
+srl <- createRandoList(nPat = c(60, 40, 80, 40), strata = strata,
+                       arm_names = arm_names, blocklength = c(4, 6),
+                       blocklength_prob = c(0.75, 0.25), seed = SEED)
+names(srl)
+head(srl$HCMC.Child, 4)
+```
+
+By default the strata are generated one after another from a single random
+stream (as in the legacy code), so changing the size of one stratum changes the
+strata after it. If a stratum may need to be extended later, use
+`seed_per_stratum = TRUE`: stratum *i* then uses seed `SEED + i - 1` and the
+strata no longer depend on each other.
+
+```{r}
+a <- createRandoList(c(20, 30), strata = c(A = "1", B = "2"), seed = SEED,
+                     seed_per_stratum = TRUE, patid_format = list(width = 3, flag = "0"))
+b <- createRandoList(c(50, 30), strata = c(A = "1", B = "2"), seed = SEED,
+                     seed_per_stratum = TRUE, patid_format = list(width = 3, flag = "0"))
+identical(a$B, b$B)
+```
+
+## Permuting patient numbers
+
+`n.block_permute` shuffles the patient numbers within every *n* blocks, so the
+numbers on the packs do not follow the allocation order. Be clear about which
+order patients are enrolled in:
+
+* if patients receive the **next row** of the list, balance holds at the end of
+  every block, as usual;
+* if patients receive the **next randomisation number**, the shuffled numbers
+  define the sequence and balance is only guaranteed at the end of each group of
+  `n.block_permute` blocks (with `Inf`, only at the end of the stratum).
+
+```{r}
+p <- createRandoList(24, arm_names = arm_names, blocklength = 4,
+                     n.block_permute = 2, seed = SEED)
+p[, c("pat_id", "block_number", "permute.block", "arm", "RanNo")]
+```
+
+## Reproducibility checklist
+
+* Copy the package version (or the function file) used into the study folder;
+  the log records `randolist` and R versions.
+* Set the seed in the call (`seed =`) and keep `sample_kind` the same for the
+  dummy and the final list. The default `"Rounding"` matches the legacy code;
+  `"Rejection"` is R's current default and equally reproducible.
+* Re-running the final code must give the same MD5 sum as in the log.
+* The function restores your random number settings when it finishes, so code
+  that runs after it is not affected.
+
+## Differences from the legacy `createRandoListNew.R`
+
+Same seed + same arguments give the same list, with these exceptions, which
+are all deliberate:
+
+* **Bug fix.** With `n.block_permute > 0`, the legacy code could give a wrong or
+  duplicated patient number when the last permutation group held a single
+  patient (`sample(41, 1)` samples from `1:41`). The new code keeps the
+  correct number; all other rows and the following strata are unchanged.
+* Lists whose randomisation numbers would not be unique are refused.
+* Strata with fewer patients than arms (or none) are allowed.
+* The caller's `sample.kind` is restored instead of being reset to `"default"`.
+
+The package tests run the legacy file side by side with the new code over many
+seeds and settings to confirm this.
